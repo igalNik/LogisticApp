@@ -1,0 +1,5 @@
+<type>: <short description>
+
+<detailed description>
+
+Closes #<issue number> (if applicable)
