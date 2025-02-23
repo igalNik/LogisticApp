@@ -1,13 +1,13 @@
 const User = require('./../models/userModel');
 const Department = require('./../models/departmentModel');
-const APIFeatures = require('./../utils/apiFeatures.helper');
+const APIFeatures = require('../utils/APIFeatures.helper');
 const CreateUserRequestDto = require('../dtos/user/create-user-request.dto');
 const CreateUserDto = require('./../dtos/user/create-user.dto');
 const UpdateUserRequestDto = require('./../dtos/user/update-user-request.dto');
 const ResponseUserDto = require('./../dtos/user/user-response.dto');
 const { successResponse } = require('./../utils/response.helper');
 
-exports.getAllUsers = async function (req, res) {
+exports.getAllUsers = async function (req, res, next) {
   const features = new APIFeatures(User.find(), req.query)
     .filter()
     .sort()
@@ -18,13 +18,13 @@ exports.getAllUsers = async function (req, res) {
   res.status(200).json(users);
 };
 
-exports.getUser = async function (req, res) {
+exports.getUser = async function (req, res, next) {
   const { id } = req.params;
   const user = new ResponseUserDto(await User.findById(id));
   res.status(200).json(user);
 };
 
-exports.createUser = async function (req, res) {
+exports.createUser = async function (req, res, next) {
   const createUserRequestDto = new CreateUserRequestDto(req.body);
 
   const newUser = await User.create(createUserRequestDto);
@@ -32,7 +32,7 @@ exports.createUser = async function (req, res) {
   res.status(201).json(new ResponseUserDto(newUser));
 };
 
-exports.updateUser = async function (req, res) {
+exports.updateUser = async function (req, res, next) {
   const { id } = req.params;
 
   const updatedUser = await User.findByIdAndUpdate(
@@ -44,7 +44,7 @@ exports.updateUser = async function (req, res) {
   res.status(200).json(updatedUser);
 };
 
-exports.deleteUser = async function (req, res) {
+exports.deleteUser = async function (req, res, next) {
   const { id } = req.params;
 
   const isUserExists = await User.exists({ _id: id });
@@ -54,7 +54,7 @@ exports.deleteUser = async function (req, res) {
   successResponse(res, 204, 'User deleted successfully');
 };
 
-exports.getUsersStats = async function (req, res) {
+exports.getUsersStats = async function (req, res, next) {
   try {
     const result = await User.aggregate([
       {
