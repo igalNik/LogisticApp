@@ -23,10 +23,4 @@ function shortWord(fieldName) {
   };
 }
 
-function objectId(field) {
-  return {
-    validator: (props) => validator.objectId(props),
-    message: (props) => messages.objectId(field || props),
-  };
-}
 module.exports = { objectId, alphaHebrewOrEnglish, shortWord };

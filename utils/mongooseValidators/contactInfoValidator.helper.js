@@ -15,10 +15,17 @@ function email(fieldName) {
   };
 }
 
-function password(fieldName) {
+function password() {
   return {
-    validator: (props) => validator.isStrongPassword(props),
-    message: (props) => messages.strongPassword(fieldName || props),
+    validator: (props) => validator.isStrongPassword(password),
+    message: (props) => messages.strongPassword,
   };
 }
-module.exports = { phoneNumber, email, password };
+
+function matchesPasswordConfirm() {
+  return {
+    validator: validator.isMatchesPasswordConfirm,
+    message: messages.passwordConfirmMatch,
+  };
+}
+module.exports = { phoneNumber, email, password, matchesPasswordConfirm };

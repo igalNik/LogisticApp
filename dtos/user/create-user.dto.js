@@ -8,18 +8,22 @@ class CreateUserDto {
     lastName,
     phoneNumber,
     email,
-    roll,
+    role,
     department,
     password,
+    passwordConfirm,
+    passwordChangedAt,
   }) {
     this.personalNumber = personalNumber;
     this.firstName = firstName;
     this.lastName = lastName;
     this.phoneNumber = phoneNumber;
     this.email = email;
-    this.roll = roll;
+    this.role = role;
     this.department = new userEmbeddedDepartmentDto(department);
     this.password = password;
+    this.passwordConfirm = passwordConfirm;
+    this.passwordChangedAt = passwordChangedAt;
   }
 }
 

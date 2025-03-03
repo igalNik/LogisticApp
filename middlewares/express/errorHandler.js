@@ -1,7 +1,11 @@
+const { createResponse } = require('./../../utils/response.helper');
+
 const handleCastError = (err) => ({
   status: 'fail',
   statusCode: 400,
   message: `Invalid ${err.path}: ${err.value}`,
+  err,
+  stack: err.stack,
 });
 
 const handleValidationError = (err) => ({
@@ -9,6 +13,8 @@ const handleValidationError = (err) => ({
   statusCode: 400,
   message: 'Invalid input data',
   errors: Object.values(err.errors).map((el) => el.message),
+  err,
+  stack: err.stack,
 });
 
 const handleDuplicateKeyError = (err) => ({
@@ -17,24 +23,37 @@ const handleDuplicateKeyError = (err) => ({
   message: `Duplicate field value: ${
     Object.keys(err.keyValue)[0]
   }. Please use another value!`,
+  err,
+  stack: err.stack,
 });
 
 const errorHandler = function (err, req, res, next) {
   if (err.name === 'ValidationError')
-    return res.status(400).json(handleValidationError(err));
+    return createResponse(res, 400, handleValidationError(err)).send();
+  // return res.status(400).json(handleValidationError(err));
   if (err.name === 'CastError')
-    return res.status(400).json(handleCastError(err));
+    return createResponse(res, 400, handleCastError(err)).send();
+  // return res.status(400).json(handleCastError(err));
   if (err.code === 11000)
-    return res.status(400).json(handleDuplicateKeyError(err));
+    return createResponse(res, 400, handleDuplicateKeyError(err)).send();
+  // return res.status(400).json(handleDuplicateKeyError(err));
 
   const statusCode = err.statusCode || 500;
 
-  res.status(statusCode).json({
+  createResponse(res, statusCode, {
     success: false,
-    status: err.status,
+    status: err.status || 'error',
     message: err.message || 'Internal Server Error',
+    stack: err.stack,
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-  });
+  }).send();
+  // res.status(statusCode).json({
+  //   success: false,
+  //   status: err.status || 'error',
+  //   message: err.message || 'Internal Server Error',
+  //   stack: err.stack,
+  //   stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+  // });
 };
 
 module.exports = errorHandler;

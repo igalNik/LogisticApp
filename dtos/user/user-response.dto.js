@@ -5,11 +5,13 @@ class UserResponseDto {
     _id,
     personalNumber,
     firstName,
+    lastName,
     phoneNumber,
     email,
-    lastName,
     department,
+    role,
     password,
+    passwordChangedAt,
   }) {
     this.id = _id;
     this.personalNumber = personalNumber;
@@ -17,8 +19,10 @@ class UserResponseDto {
     this.lastName = lastName;
     this.phoneNumber = phoneNumber;
     this.email = email;
+    this.role = role;
     this.department = new UserEmbeddedDepartmentDto(department);
     this.password = password;
+    this.passwordChangedAt = passwordChangedAt;
   }
 }
 

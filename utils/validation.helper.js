@@ -1,5 +1,5 @@
+const mongoose = require('mongoose');
 const { maxLength } = require('./validationMessages.helper');
-
 /**
  ** Validates an email address.
  *
@@ -94,6 +94,18 @@ function isStrongPassword(password) {
   return strongPasswordRegex.test(password);
 }
 
+/**
+ * Validates if the password matches its confirmation.
+ *
+ * Match Criteria:
+ * - The **password** must exactly match the **passwordConfirm** field.
+ *
+ * @returns {boolean} - Returns true if the password matches the confirmation, otherwise false.
+ */
+function isMatchesPasswordConfirm(password, passwordConfirm) {
+  return password === passwordConfirm;
+}
+
 const isLength = (value, options = {}) => {
   const { min = 0, max = Infinity } = options;
   return value.length >= min && value.length <= max;
@@ -120,6 +132,7 @@ module.exports = {
   isAlphaHebrewOrEnglish,
   isNumeric,
   isStrongPassword,
+  isMatchesPasswordConfirm,
   isLength,
   isObjectId,
 };
