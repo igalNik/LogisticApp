@@ -70,7 +70,8 @@ function createResponse(res, statusCode, data) {
     customFields: (...customFields) => {},
 
     send: () => {
-      if (!Object.keys(payload.data).length) payload.data = undefined;
+      if (payload.data && !Object.keys(payload.data).length)
+        payload.data = undefined;
       res.status(statusCode).json({ ...payload });
     },
   };
