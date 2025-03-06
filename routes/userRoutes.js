@@ -15,24 +15,24 @@ router
   .route('/')
   .get(
     authMiddlewares.restrictTo(...appRoles.elevatedRoles),
-    catchAsync(userController.getAllUsers)
+    catchAsync(userController.getAll)
   )
   .post(
     catchAsync(filterRequestBody(...requestTemplates.user.manager)),
-    catchAsync(authMiddlewares.restrictTo(...appRoles.elevatedRoles)),
-    catchAsync(userController.createUser)
+    authMiddlewares.restrictTo(...appRoles.elevatedRoles),
+    catchAsync(userController.create)
   );
 
 router
   .route('/:id')
-  .get(catchAsync(userController.getUser))
+  .get(catchAsync(userController.get))
   .patch(
     catchAsync(filterRequestBody(...requestTemplates.user.manager)),
-    catchAsync(userController.updateUser)
+    catchAsync(userController.update)
   )
   .delete(
     catchAsync(filterRequestBody(...requestTemplates.user.manager)),
-    catchAsync(userController.deleteUser)
+    catchAsync(userController.delete)
   );
 
 module.exports = router;
