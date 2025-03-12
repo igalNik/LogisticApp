@@ -9,8 +9,8 @@ class UserController extends CRUDController {
   /**
    *
    */
-  constructor() {
-    super(User, responseTemplates.user.regularUser);
+  constructor(model, responseFieldMap = null) {
+    super(model, responseFieldMap);
   }
   getUsersStats = async function (req, res, next) {
     const result = await User.aggregate([
@@ -43,4 +43,4 @@ class UserController extends CRUDController {
     createResponse(res, 200, result).send();
   };
 }
-module.exports = new UserController(User, responseTemplates.user.regularUser);
+module.exports = new UserController(User, responseTemplates.user.regular);
