@@ -1,4 +1,4 @@
-const router = require('express').Router();
+const router = require('express').Router({ mergeParams: true });
 const userController = require('../controllers/userController');
 const authMiddlewares = require('../middlewares/express/auth.middleware');
 const catchAsync = require('./../utils/catchAsync.helper');
