@@ -19,6 +19,7 @@ function createResponse(res, statusCode, data) {
       : `${statusCode}`.startsWith(4)
       ? 'fail'
       : 'error',
+    items: Array.isArray(data) ? data.length : undefined,
     data: Array.isArray(data)
       ? mongooseHelper.modelsToObjects(data)
       : mongooseHelper.modelToObject(data),
