@@ -9,6 +9,7 @@ const userMiddlewares = require('./../middlewares/mongoose/user.middleware');
 const passwordMiddlewares = require('./../middlewares/mongoose/password.middleware');
 const messages = require('./../utils/validationMessages.helper');
 const appRolls = require('./../utils/appRoles.helper');
+
 const userOptions = {
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
@@ -43,13 +44,13 @@ const userType = {
   firstName: {
     type: String,
     required: [true, messages.required],
-    validate: textValidators.shortWord(),
+    validate: textValidators.shortAlphaHebrewOrEnglishWord(),
     trim: true,
   },
   lastName: {
     type: String,
     required: [true, messages.required],
-    validate: textValidators.shortWord(),
+    validate: textValidators.shortAlphaHebrewOrEnglishWord(),
     trim: true,
   },
   phoneNumber: {
@@ -126,4 +127,4 @@ userSchema.pre('save', passwordMiddlewares.setPasswordChangedAt);
   userSchema.pre(event, passwordMiddlewares.encryptPasswordOnUpdate);
 });
 
-module.exports = mongoose.model('UserModel', userSchema, 'users');
+module.exports = mongoose.model('User', userSchema, 'users');

@@ -1,16 +1,16 @@
 const validator = require('../validation.helper');
 const messages = require('../validationMessages.helper');
-
+const { PERSONAL_NUMBER_LENGTH } = require('./validationConstants.helper');
 const numeric = (fieldName) => ({
   validator: (value) => validator.isNumeric(value),
   message: (field) => messages.numeric(fieldName || field),
 });
 
 const personalNumberLength = (fieldName) => {
-  const options = { min: 6, max: 7 };
   return {
-    validator: (props) => validator.isLength(props, options),
-    message: (props) => messages.length(fieldName || props, options),
+    validator: (props) => validator.isLength(props, PERSONAL_NUMBER_LENGTH),
+    message: (props) =>
+      messages.length(fieldName || props, PERSONAL_NUMBER_LENGTH),
   };
 };
 

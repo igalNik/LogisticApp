@@ -1,6 +1,8 @@
 const validator = require('../validation.helper');
 const messages = require('../validationMessages.helper');
 
+const SHORT_WORD_LENGTH = { min: 2, max: 20 };
+
 function objectId(fieldName) {
   return {
     validator: (props) => validator.isObjectId(props),
@@ -16,11 +18,27 @@ function alphaHebrewOrEnglish(fieldName) {
 }
 
 function shortWord(fieldName) {
-  const options = { min: 2, max: 20 };
   return {
-    validator: (props) => validator.isLength(props, options),
-    message: (props) => messages.length(props, options),
+    validator: (props) => validator.isLength(props, SHORT_WORD_LENGTH),
+    message: (props) => messages.length(props, SHORT_WORD_LENGTH),
   };
 }
 
-module.exports = { objectId, alphaHebrewOrEnglish, shortWord };
+function shortAlphaHebrewOrEnglishWord(fieldName) {
+  return {
+    validator: (props) =>
+      validator.isLength(props, SHORT_WORD_LENGTH) &&
+      validator.isAlphaHebrewOrEnglish(props),
+    message: (props) =>
+      validator.isAlphaHebrewOrEnglish(props)
+        ? messages.length(props, SHORT_WORD_LENGTH)
+        : messages.alphaNoMix(props),
+  };
+}
+
+module.exports = {
+  objectId,
+  alphaHebrewOrEnglish,
+  shortWord,
+  shortAlphaHebrewOrEnglishWord,
+};
