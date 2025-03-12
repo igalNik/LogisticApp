@@ -32,6 +32,9 @@ app.use(xss());
 // Prevent HTTP parameter pollution
 app.use(hpp());
 
+// Health check route
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
 // Authentication routes
 app.use('/api/v1/auth', authRouter);
 
