@@ -4,7 +4,7 @@
  */
 const responseTemplates = {
   user: {
-    regularUser: [
+    regular: [
       '_id',
       'personalNumber',
       'firstName',
@@ -16,15 +16,14 @@ const responseTemplates = {
       'appRole',
       'department',
     ],
-    managerUser: ['_id', 'personalNumber', 'role'],
-    adminUser: ['_id', 'personalNumber', 'firstName', 'lastName', 'role'],
+    manager: ['_id', 'personalNumber', 'role'],
+    admin: ['_id', 'personalNumber', 'firstName', 'lastName', 'role'],
   },
-  order: {
-    basic: ['_id', 'orderNumber', 'status'],
-    detailed: ['_id', 'orderNumber', 'status', 'items'],
-  },
+
   department: {
-    basic: ['_id', 'name'],
+    regular: ['_id', 'name'],
+    manager: ['_id', 'name', 'officerId'],
+    admin: ['_id', 'name', 'officerId'],
   },
 };
 
