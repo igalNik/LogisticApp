@@ -1,7 +1,7 @@
 const validator = require('../validation.helper');
 const messages = require('../validationMessages.helper');
 
-const SHORT_WORD_LENGTH = { min: 2, max: 20 };
+const { SHORT_WORD_LENGTH } = require('./validationConstants.helper');
 
 function objectId(fieldName) {
   return {
