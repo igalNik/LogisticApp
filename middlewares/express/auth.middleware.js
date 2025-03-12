@@ -33,9 +33,10 @@ const protectRoute = async function (req, res, next) {
       new AppError('The token belonging to this user no longer exist', 401)
     );
   }
-  const isChanged = user.changedPasswordAfter(decodedToken.iat);
   // 5. Check if password changed after token issuance
-  if (user.changedPasswordAfter(decodedToken.iat)) {
+  const isPasswordChanged = user.changedPasswordAfter(decodedToken.iat);
+
+  if (isPasswordChanged) {
     return next(
       new AppError('User recently changed password! Please log in again', 401)
     );
