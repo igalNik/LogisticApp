@@ -1,4 +1,4 @@
-const Department = require('./../models/departmentModel');
+const Department = require('./../models/department/department.model');
 const CRUDController = require('../utils/CRUDController.helper');
 const responseTemplates = require('./../utils/responseTemplates.helper');
 

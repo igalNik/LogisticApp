@@ -8,6 +8,8 @@ require('dotenv').config({ path: './config.env' });
 const authRouter = require('./routes/authRoutes');
 const userRouter = require('./routes/userRoutes');
 const departmentRouter = require('./routes/departmentRoutes');
+const equipmentTypeRouter = require('./routes/equipmentTypeRoutes');
+const userEquipmentSignatureActionsRoutes = require('./routes/userEquipmentSignatureActionsRoutes');
 const errorHandler = require('./middlewares/express/errorHandler');
 const AppError = require('./errors/AppError');
 const rateLimitMiddleware = require('./middlewares/express/rateLimit.middleware');
@@ -43,6 +45,12 @@ app.use('/api/v1/users', userRouter);
 
 // Department routes
 app.use('/api/v1/departments', departmentRouter);
+
+// Equipment type routes
+app.use('/api/v1/equipment', equipmentTypeRouter);
+
+// Equipment type routes
+app.use('/api/v1/signatures', userEquipmentSignatureActionsRoutes);
 
 // Handle undefined routes
 app.all('*', (req, res, next) => {

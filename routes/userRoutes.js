@@ -1,5 +1,7 @@
-const router = require('express').Router({ mergeParams: true });
+const router = require('express').Router();
 const userController = require('../controllers/userController');
+const userEquipmentSignatureActionsRoutes = require('./userEquipmentSignatureActionsRoutes');
+const userEquipmentInventoryRoutes = require('./userEquipmentInventoryRoutes');
 const authMiddlewares = require('../middlewares/express/auth.middleware');
 const catchAsync = require('./../utils/catchAsync.helper');
 const appRoles = require('./../utils/appRoles.helper');
@@ -8,6 +10,9 @@ const { filterRequestBody } = require('./../middlewares/express/requestFilter.mi
 const requestTemplates = require('./../utils/requestTemplates.helper');
 
 router.use(catchAsync(authMiddlewares.protectRoute));
+
+router.use('/:userId/signatures', userEquipmentSignatureActionsRoutes);
+router.use('/:userId/equipments', userEquipmentInventoryRoutes);
 
 router.route('/get-users-stats').get(catchAsync(userController.getUsersStats));
 

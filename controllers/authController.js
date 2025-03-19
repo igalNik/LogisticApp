@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('./../models/userModel');
+const User = require('./../models/user/user.model');
 const { successResponse } = require('./../utils/response.helper');
 const { sendEmail } = require('./../utils/email.helper');
 const { hashSha256 } = require('./../utils/crypto.helper');

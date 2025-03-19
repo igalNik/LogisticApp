@@ -23,6 +23,12 @@ function shortWord(fieldName) {
     message: (props) => messages.length(props, SHORT_WORD_LENGTH),
   };
 }
+function sentence(fieldName) {
+  return {
+    validator: (props) => validator.isLength(props, SENTENCE_LENGTH),
+    message: (props) => messages.length(props, SENTENCE_LENGTH),
+  };
+}
 
 function shortAlphaHebrewOrEnglishWord(fieldName) {
   return {
@@ -36,9 +42,19 @@ function shortAlphaHebrewOrEnglishWord(fieldName) {
   };
 }
 
+function allStringsShort(fieldName) {
+  return {
+    validator: (arr) =>
+      arr.every((item) => validator.allStringsShort(item, SHORT_WORD_LENGTH)),
+    message: (props) => messages.arrayItemsLength(props, SHORT_WORD_LENGTH),
+  };
+}
+
 module.exports = {
   objectId,
   alphaHebrewOrEnglish,
   shortWord,
   shortAlphaHebrewOrEnglishWord,
+  sentence,
+  allStringsShort,
 };

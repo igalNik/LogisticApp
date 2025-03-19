@@ -36,7 +36,6 @@ const errorHandler = function (err, req, res, next) {
   // return res.status(400).json(handleCastError(err));
   if (err.code === 11000)
     return createResponse(res, 400, handleDuplicateKeyError(err)).send();
-  // return res.status(400).json(handleDuplicateKeyError(err));
 
   const statusCode = err.statusCode || 500;
 
@@ -47,13 +46,6 @@ const errorHandler = function (err, req, res, next) {
     stack: err.stack,
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
   }).send();
-  // res.status(statusCode).json({
-  //   success: false,
-  //   status: err.status || 'error',
-  //   message: err.message || 'Internal Server Error',
-  //   stack: err.stack,
-  //   stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-  // });
 };
 
 module.exports = errorHandler;

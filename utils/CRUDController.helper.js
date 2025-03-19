@@ -33,7 +33,7 @@ class CRUDController {
     let modelQuery = this.model.find();
     for (const [key, value] of Object.entries(req.params)) {
       modelQuery = modelQuery.find({
-        $or: [({ [key]: value }, { [key.replace(/Id/, '.id')]: value })],
+        $or: [{ [key]: value }, { [key.replace(/Id/, '.id')]: value }],
       });
     }
 

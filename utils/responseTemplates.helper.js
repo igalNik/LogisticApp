@@ -25,6 +25,15 @@ const responseTemplates = {
     manager: ['_id', 'name', 'officerId'],
     admin: ['_id', 'name', 'officerId'],
   },
+  equipmentType: {
+    regular: ['_id', 'name', 'description', 'provider', 'tags'],
+  },
+  userEquipmentInventory: {
+    regular: ['_id', 'userId', 'items'],
+  },
+  userEquipmentSignatureActions: {
+    regular: ['userId', 'items', 'actionDate', '_id'],
+  },
 };
 
 module.exports = responseTemplates;

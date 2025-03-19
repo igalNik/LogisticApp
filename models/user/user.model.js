@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const textValidators = require('./../utils/mongooseValidators/textValidator.helper');
-const numericValidator = require('../utils/mongooseValidators/numericValidator.helper');
-const contactInfoValidator = require('./../utils/mongooseValidators/contactInfoValidator.helper');
-const userSchemaMethods = require('./userModel.methods');
-const userMiddlewares = require('./../middlewares/mongoose/user.middleware');
-const passwordMiddlewares = require('./../middlewares/mongoose/password.middleware');
-const messages = require('./../utils/validationMessages.helper');
-const appRolls = require('./../utils/appRoles.helper');
+const textValidators = require('../../utils/mongooseValidators/textValidator.helper');
+const numericValidator = require('../../utils/mongooseValidators/numericValidator.helper');
+const contactInfoValidator = require('../../utils/mongooseValidators/contactInfoValidator.helper');
+const userSchemaMethods = require('./user.methods');
+const userMiddlewares = require('../../middlewares/mongoose/user.middleware');
+const passwordMiddlewares = require('../../middlewares/mongoose/password.middleware');
+const messages = require('../../utils/validationMessages.helper');
+const appRolls = require('../../utils/appRoles.helper');
 
 const userOptions = {
   toJSON: { virtuals: true },

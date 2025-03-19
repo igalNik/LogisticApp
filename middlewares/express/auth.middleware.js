@@ -1,6 +1,6 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
-const User = require('../../models/userModel');
+const User = require('../../models/user/user.model');
 const AppError = require('./../../errors/AppError');
 const appRoles = require('./../../utils/appRoles.helper');
 const { validateEmail } = require('../../utils/validation.helper');

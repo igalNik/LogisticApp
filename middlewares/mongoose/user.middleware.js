@@ -1,4 +1,4 @@
-const Department = require('./../../models/departmentModel');
+const Department = require('./../../models/department/department.model');
 const UserEmbeddedDepartmentDto = require('./../../dtos/user/user-embedded-department.dto');
 const AppError = require('../../errors/AppError');
 const contactInfoValidator = require('./../../utils/mongooseValidators/contactInfoValidator.helper');

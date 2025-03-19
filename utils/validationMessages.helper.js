@@ -5,7 +5,8 @@ const getFieldName = (field) =>
 
 const validationMessages = {
   required: (props) => `${camelToSentence(getFieldName(props))} is required.`,
-
+  min: '{PATH} ({VALUE}) is less than minimum allowed value ({MIN})',
+  max: '{PATH} ({VALUE}) is greater than maximum allowed value ({MAX})',
   length: (props, options) => {
     const fieldName = getFieldName(props);
     const { min, max } = options;
@@ -25,6 +26,25 @@ const validationMessages = {
       } characters.`;
   },
 
+  arrayItemsLength: (props, options) => {
+    const fieldName = getFieldName(props);
+    const { min, max } = options;
+    if (min && max)
+      return `in ${camelToSentence(fieldName)} each item must be at least ${
+        options.min
+      } and not exceed ${options.max} characters.`;
+
+    if (min)
+      return `in ${camelToSentence(fieldName)} each item must be at least ${
+        options.min
+      } characters.`;
+
+    if (max)
+      return `in ${camelToSentence(fieldName)} each item must not exceed ${
+        options.max
+      } characters.`;
+  },
+
   maxLength: (props) => {
     return `${camelToSentence(fieldName)} must not exceed ${
       props.value.length
@@ -38,6 +58,8 @@ const validationMessages = {
 
   uniqueEmail: 'Email already exists.',
 
+  unique: (field) =>
+    `${field} field must be unique. The provided value is already in use`,
   numeric: (field) =>
     `${camelToSentence(getFieldName(field))} must contain only numbers.`,
 

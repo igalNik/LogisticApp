@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const departmentMiddlewares = require('./../middlewares/mongoose/department.middleware');
-const textValidators = require('./../utils/mongooseValidators/textValidator.helper');
-const messages = require('./../utils/validationMessages.helper');
+const departmentMiddlewares = require('../../middlewares/mongoose/department.middleware');
+const textValidators = require('../../utils/mongooseValidators/textValidator.helper');
+const messages = require('../../utils/validationMessages.helper');
 
 const departmentSchema = mongoose.Schema({
   name: {
