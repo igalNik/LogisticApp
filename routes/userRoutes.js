@@ -19,7 +19,7 @@ router.route('/get-users-stats').get(catchAsync(userController.getUsersStats));
 router
   .route('/')
   .get(
-    authMiddlewares.restrictTo(...appRoles.elevatedRoles),
+    // authMiddlewares.restrictTo(...appRoles),
     catchAsync(userController.getAll)
   )
   .post(

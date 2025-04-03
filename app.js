@@ -1,5 +1,8 @@
 const express = require('express');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
@@ -24,6 +27,16 @@ app.use('/api', rateLimitMiddleware);
 
 // Parse JSON request bodies
 app.use(express.json());
+
+// parse the cookie
+app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true, // Allows sending cookies
+  })
+);
 
 // Prevent MongoDB injection attacks
 app.use(mongoSanitize());

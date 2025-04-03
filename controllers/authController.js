@@ -19,7 +19,7 @@ const signToken = (userId) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-const signup = async function (req, res, next) {
+async function signup(req, res, next) {
   const createUserRequestDto = new CreateUserRequestDto(req.body);
 
   const newUser = await User.create(createUserRequestDto);
@@ -31,9 +31,9 @@ const signup = async function (req, res, next) {
     .tokenWithCookie(token)
     .send();
   // res.status(201).json(new CreateUserWithAuthDto(newUser, token));
-};
+}
 
-const login = async function (req, res, next) {
+async function login(req, res, next) {
   const { personalNumber, password } = req.body;
 
   if (!personalNumber || !password)
@@ -54,10 +54,20 @@ const login = async function (req, res, next) {
   const token = signToken(user.id);
 
   createResponse(res, 200, user)
-    .filterFields(responseTemplates.user.regularUser)
+    // .filterFields(responseTemplates.user.regularUser)
     .tokenWithCookie(token)
     .send();
-};
+}
+
+async function checkAuth(req, res, next) {
+  const { user } = req;
+  const token = req.cookies.jwt;
+
+  createResponse(res, 200, user)
+    // .filterFields(responseTemplates.user.regularUser)
+    .tokenWithCookie(token)
+    .send();
+}
 
 async function forgotPassword(req, res, next) {
   // 1. Get user by email or personalNumber
@@ -155,10 +165,12 @@ async function updatePassword(req, res, next) {
     .tokenWithCookie(newToken)
     .send();
 }
+
 module.exports = {
   signToken,
   signup,
   login,
+  checkAuth,
   forgotPassword,
   resetPassword,
   updatePassword,

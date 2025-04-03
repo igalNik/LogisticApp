@@ -11,13 +11,14 @@ const { validateEmail } = require('../../utils/validation.helper');
  * - Validates user existence and password change status.
  */
 const protectRoute = async function (req, res, next) {
-  const { authorization } = req.headers;
-  // 1. Check if token exists and is in Bearer format
-  if (!authorization || !authorization.startsWith('Bearer')) {
+  // 1. Extract token from cookie
+  const token = req.cookies.jwt;
+
+  // 2. Check if token exists
+  if (!token) {
     return next(new AppError('unauthorized', 401));
   }
-  // 2. Extract token from header
-  const token = authorization.split(' ')[1];
+
   // 3. Verify token and decode payload
   const decodedToken = await promisify(jwt.verify)(
     token,

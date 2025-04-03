@@ -51,21 +51,20 @@ function createResponse(res, statusCode, data) {
       payload.token = token;
 
       const cookieOptions = {
-        expires: new Date(
-          Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-        ),
-        http: true,
+        httpOnly: true,
+        sameSite: isProduction() ? 'None' : 'Strict',
+        path: '/',
+        maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60,
+        secure: isProduction() ? true : false,
       };
 
-      if (isProduction()) cookieOptions.secure = true;
-
-      res.cookie('jwt', token);
+      res.cookie('jwt', token, cookieOptions);
       return responseOperations;
     },
 
     message: (message) => {
       payload.message = message;
-      return responseOperationsl;
+      return responseOperations;
     },
 
     customFields: (...customFields) => {},
