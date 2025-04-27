@@ -9,7 +9,7 @@ const appRoles = require('./../utils/appRoles.helper');
 const { filterRequestBody } = require('./../middlewares/express/requestFilter.middleware');
 const requestTemplates = require('./../utils/requestTemplates.helper');
 
-router.use(catchAsync(authMiddlewares.protectRoute));
+// router.use(catchAsync(authMiddlewares.protectRoute));
 
 router.use('/:userId/signatures', userEquipmentSignatureActionsRoutes);
 router.use('/:userId/equipments', userEquipmentInventoryRoutes);

@@ -1,6 +1,7 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../../models/user/user.model');
+const Auth = require('../../models/auth/auth.model');
 const AppError = require('./../../errors/AppError');
 const appRoles = require('./../../utils/appRoles.helper');
 const { validateEmail } = require('../../utils/validation.helper');
@@ -25,17 +26,17 @@ const protectRoute = async function (req, res, next) {
     process.env.JWT_SECRET
   );
   // 4. Fetch user and include passwordChangedAt for validation
-  const user = await User.findById(decodedToken.id).select(
+  const userAuth = await Auth.findOne({ userId: decodedToken.id }).select(
     '+passwordChangedAt'
   );
 
-  if (!user) {
+  if (!userAuth) {
     return next(
       new AppError('The token belonging to this user no longer exist', 401)
     );
   }
   // 5. Check if password changed after token issuance
-  const isPasswordChanged = user.changedPasswordAfter(decodedToken.iat);
+  const isPasswordChanged = userAuth.changedPasswordAfter(decodedToken.iat);
 
   if (isPasswordChanged) {
     return next(
@@ -43,7 +44,7 @@ const protectRoute = async function (req, res, next) {
     );
   }
 
-  req.user = user;
+  req.user = await User.findById(userAuth.userId);
   next();
 };
 

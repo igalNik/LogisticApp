@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+
 const User = require('./../models/user/user.model');
+const Auth = require('./../models/auth/auth.model');
 const { successResponse } = require('./../utils/response.helper');
 const { sendEmail } = require('./../utils/email.helper');
 const { hashSha256 } = require('./../utils/crypto.helper');
@@ -14,6 +17,10 @@ const { passwordConfirm } = require('../utils/validationMessages.helper');
 const { createResponse } = require('./../utils/response.helper');
 const responseTemplates = require('./../utils/responseTemplates.helper');
 
+const INVALID_CREDENTIALS_ERROR = new AppError(
+  'Incorrect Personal number or Password',
+  403
+);
 const signToken = (userId) =>
   jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -41,15 +48,20 @@ async function login(req, res, next) {
       new AppError('Please provide personal number and password', 400)
     );
 
-  const user = await User.findOne({ personalNumber }).select('+password');
+  const user = await User.findOne({ personalNumber });
 
-  const correctPassword = await user.isCorrectPassword(
+  if (!user) next(INVALID_CREDENTIALS_ERROR);
+
+  const userAuth = await Auth.findOne({
+    userId: user._id,
+  }).select('+password');
+
+  const correctPassword = await userAuth.isCorrectPassword(
     password,
-    user?.password
+    userAuth?.password
   );
 
-  if (!correctPassword)
-    return next(new AppError('Incorrect Personal number or Password', 403));
+  if (!correctPassword) return next(INVALID_CREDENTIALS_ERROR);
 
   const token = signToken(user.id);
 
