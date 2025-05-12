@@ -25,7 +25,7 @@ const authType = {
     type: String,
     require: [true, messages.required],
     select: false,
-    validate: contactInfoValidator.password(),
+    validate: contactInfoValidator.password,
   },
   passwordConfirm: {
     type: String,
@@ -37,7 +37,7 @@ const authType = {
   },
   appRole: {
     type: String,
-    required: [true, messages.required],
+    // required: [true, messages.required],
     enum: appRolls.allRoles,
     default: appRolls.ROLES.UNIT_MEMBER,
   },
@@ -61,8 +61,8 @@ authSchema.methods.changedPasswordAfter = authSchemaMethods.changedPasswordAfter
 authSchema.methods.createPasswordResetToken = authSchemaMethods.createPasswordResetToken;
 
 // add middleware for save event
+authSchema.pre('save', passwordMiddlewares.matchesPasswordConfirmOnSave);
 authSchema.pre('save', passwordMiddlewares.encryptPasswordOnSave);
 authSchema.pre('save', passwordMiddlewares.setPasswordChangedAt);
-authSchema.pre('save', passwordMiddlewares.matchesPasswordConfirmOnSave);
 
 module.exports = mongoose.model('Auth', authSchema, 'auth');

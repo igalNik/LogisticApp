@@ -15,7 +15,7 @@ function email(fieldName) {
   };
 }
 
-function password() {
+function password(password) {
   return {
     validator: (props) => validator.isStrongPassword(password),
     message: (props) => messages.strongPassword,

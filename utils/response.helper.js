@@ -11,6 +11,13 @@ const mongoose = require('mongoose');
 function isMongooseModel(obj) {
   return obj && obj instanceof mongoose.Model;
 }
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: isProduction() ? 'None' : 'Strict',
+  path: '/',
+  maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+  secure: isProduction() ? true : false,
+};
 
 function createResponse(res, statusCode, data) {
   const payload = {
@@ -50,15 +57,12 @@ function createResponse(res, statusCode, data) {
     tokenWithCookie: (token) => {
       payload.token = token;
 
-      const cookieOptions = {
-        httpOnly: true,
-        sameSite: isProduction() ? 'None' : 'Strict',
-        path: '/',
-        maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
-        secure: isProduction() ? true : false,
-      };
+      res.cookie('jwt', token, COOKIE_OPTIONS);
+      return responseOperations;
+    },
 
-      res.cookie('jwt', token, cookieOptions);
+    clearCookie: () => {
+      res.clearCookie('jwt', COOKIE_OPTIONS);
       return responseOperations;
     },
 

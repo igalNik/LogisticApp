@@ -5,7 +5,8 @@ const authMiddlewares = require('./../middlewares/express/auth.middleware');
 
 router.route('/signup').post(catchAsync(authController.signup));
 router.route('/login').post(catchAsync(authController.login));
-router.route('/login').post(catchAsync(authController.login));
+router.route('/logout').post(catchAsync(authController.logout));
+
 router
   .route('/check-auth')
   .get(

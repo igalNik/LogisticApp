@@ -1,39 +1,49 @@
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
 
 const User = require('./../models/user/user.model');
 const Auth = require('./../models/auth/auth.model');
-const { successResponse } = require('./../utils/response.helper');
+
 const { sendEmail } = require('./../utils/email.helper');
 const { hashSha256 } = require('./../utils/crypto.helper');
-const AppError = require('./../errors/AppError');
-const CreateUserRequestDto = require('./../dtos/user/create-user-request.dto');
-const CreateUserWithAuthDto = require('./../dtos/user/create-user-with-auth.dto');
+const { createResponse } = require('./../utils/response.helper');
 // prettier-ignore
 const {passwordResetTemplateGreen} = require('./../utils/emailTemplates.helper');
-// prettier-ignore
-const {password} = require('../utils/mongooseValidators/contactInfoValidator.helper');
-const { passwordConfirm } = require('../utils/validationMessages.helper');
-const { createResponse } = require('./../utils/response.helper');
 const responseTemplates = require('./../utils/responseTemplates.helper');
+
+const AppError = require('./../errors/AppError');
+
+const CreateAuthForUserClientDto = require('../dtos/auth/create-auth-for-user-client.dto');
+const CreateAuthForUserApiDto = require('../dtos/auth/create-auth-for-user-api.dto');
 
 const INVALID_CREDENTIALS_ERROR = new AppError(
   'Incorrect Personal number or Password',
   403
 );
+
 const signToken = (userId) =>
   jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
 async function signup(req, res, next) {
-  const createUserRequestDto = new CreateUserRequestDto(req.body);
+  const createUserAuthClient = new CreateAuthForUserClientDto(req.body);
 
-  const newUser = await User.create(createUserRequestDto);
+  const user = await User.findOne({
+    personalNumber: createUserAuthClient.personalNumber,
+  });
 
-  const token = signToken(newUser.id);
+  if (!user) next(INVALID_CREDENTIALS_ERROR);
 
-  createResponse(res, 201, newUser)
+  const createAuthForUserApi = new CreateAuthForUserApiDto({
+    userId: user._id,
+    password: createUserAuthClient.password,
+    passwordConfirm: createUserAuthClient.passwordConfirm,
+  });
+  await Auth.create(createAuthForUserApi);
+
+  const token = signToken(user._id);
+
+  createResponse(res, 201, user)
     .filterFields(responseTemplates.user.regularUser)
     .tokenWithCookie(token)
     .send();
@@ -71,6 +81,13 @@ async function login(req, res, next) {
     .send();
 }
 
+async function logout(req, res, next) {
+  createResponse(res, 200)
+    .clearCookie()
+    .message('Successfully logged out')
+    .send();
+}
+
 async function checkAuth(req, res, next) {
   const { user } = req;
   const token = req.cookies.jwt;
@@ -84,16 +101,19 @@ async function checkAuth(req, res, next) {
 async function forgotPassword(req, res, next) {
   // 1. Get user by email or personalNumber
   const { email, personalNumber } = req.body;
-  const user = await User.findOne({ personalNumber });
+  const user = await User.findOne({ $or: [{ personalNumber }, { email }] });
+
   if (!user) {
-    return next(
-      new AppError('No user found with this email or personal number', 404)
-    );
+    return next(INVALID_CREDENTIALS_ERROR);
   }
 
+  const userAuth = await Auth.findOne({ userId: user._id });
+
+  if (!userAuth) return next(INVALID_CREDENTIALS_ERROR);
+
   // 2. Generate reset token
-  const resetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSave: false }); // Save token and expiry
+  const resetToken = userAuth.createPasswordResetToken();
+  await userAuth.save({ validateBeforeSave: false }); // Save token and expiry
 
   // 3. Send reset email
   // prettier-ignore
@@ -126,23 +146,25 @@ async function resetPassword(req, res, next) {
   // 2. Verify token
   const hashedToken = hashSha256(token);
 
-  const user = await User.findOne({
+  const userAuth = await Auth.findOne({
     passwordResetToken: hashedToken,
     // passwordResetExpires: { $gt: Date.now() },
   });
 
-  if (!user) return next(new AppError('Invalid or expired rest token'));
+  if (!userAuth) return next(new AppError('Invalid or expired rest token'));
 
   // 3.Update password
-  user.password = password;
-  user.passwordConfirm = passwordConfirm;
+  userAuth.password = password;
+  userAuth.passwordConfirm = passwordConfirm;
   passwordResetToken = undefined;
   passwordResetExpires = undefined;
 
-  await user.save();
+  await userAuth.save();
 
   // 4.Send new token
-  const newToken = signToken(user._id);
+  const newToken = signToken(userAuth.userId);
+
+  const user = await User.findById(userAuth.userId);
 
   createResponse(res, 200, user)
     .filterFields(responseTemplates.user.regularUser)
@@ -154,23 +176,25 @@ async function updatePassword(req, res, next) {
   const { id } = req.params;
   const { currentPassword, password, passwordConfirm } = req.body;
 
-  const user = await User.findById(id).select('+password');
+  const userAuth = await Auth.findOne({ userId: id }).select('+password');
 
-  const isCorrectCurrentPassword = await user.isCorrectPassword(
+  const isCorrectCurrentPassword = await userAuth.isCorrectPassword(
     currentPassword,
-    user.password
+    userAuth.password
   );
 
   if (!isCorrectCurrentPassword) {
     return next(new AppError('Your current password is wrong'), 401);
   }
 
-  user.password = password;
-  user.passwordConfirm = passwordConfirm;
+  userAuth.password = password;
+  userAuth.passwordConfirm = passwordConfirm;
 
-  await user.save();
+  await userAuth.save();
 
-  const newToken = signToken(user._id);
+  const newToken = signToken(userAuth.userId);
+
+  const user = await User.findById(userAuth.userId);
 
   createResponse(res, 200, user)
     .filterFields(responseTemplates.user.regularUser)
@@ -182,6 +206,7 @@ module.exports = {
   signToken,
   signup,
   login,
+  logout,
   checkAuth,
   forgotPassword,
   resetPassword,

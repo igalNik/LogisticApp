@@ -4,7 +4,7 @@ const AppError = require('../../errors/AppError');
 const contactInfoValidator = require('./../../utils/mongooseValidators/contactInfoValidator.helper');
 
 exports.addUserDepartmentOnSave = async function (next) {
-  if (!this.isModified('departmentId') || !this.isNew()) return next();
+  if (!this.isModified('departmentId') || !this.isNew) return next();
   const department = await Department.findById(this.departmentId)
     .select('name -_id')
     .lean();
